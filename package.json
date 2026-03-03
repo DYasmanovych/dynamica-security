@@ -2,5 +2,24 @@
   "name": "dynamica-security",
   "version": "1.0.0",
   "description": "Dynamica Security — Business-First Cybersecurity Landing Page",
-  "private": true
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DYasmanovych/dynamica-security.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DYasmanovych/dynamica-security/issues"
+  },
+  "homepage": "https://github.com/DYasmanovych/dynamica-security#readme",
+  "dependencies": {
+    "resend": "^6.9.3"
+  }
 }

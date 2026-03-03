@@ -1451,21 +1451,9 @@ function submitForm() {
   btn.disabled = true;
   btn.textContent = 'Sending...';
 
-  // Create a hidden form and submit it via iframe to avoid redirect
-  const iframe = document.createElement('iframe');
-  iframe.name = 'formsubmit';
-  iframe.style.display = 'none';
-  document.body.appendChild(iframe);
-
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = 'https://formspree.io/f/meelbwqj';
-  form.target = 'formsubmit';
-
-  const fieldData = {
+  const payload = {
     name: document.getElementById('fname').value.trim(),
     email: document.getElementById('femail').value.trim(),
-    _replyto: document.getElementById('femail').value.trim(),
     company: document.getElementById('fcompany').value.trim(),
     service: document.getElementById('fservice').value,
     expectations: document.getElementById('fexpect').value.trim(),
@@ -1474,25 +1462,18 @@ function submitForm() {
     contactEmail: document.getElementById('fcontactemail').value.trim()
   };
 
-  Object.entries(fieldData).forEach(([key, value]) => {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = value;
-    form.appendChild(input);
+  fetch('/api/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => console.log('Submit success:', data))
+  .catch(err => console.error('Submit error:', err))
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Submit Request →';
   });
-
-  document.body.appendChild(form);
-  form.submit();
-
-  // Clean up after submission
-  setTimeout(() => {
-    document.body.removeChild(form);
-    document.body.removeChild(iframe);
-  }, 2000);
-
-  btn.disabled = false;
-  btn.textContent = 'Submit Request →';
 
   document.getElementById('formView').style.display = 'none';
   document.getElementById('successView').classList.add('active');
