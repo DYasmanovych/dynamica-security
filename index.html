@@ -1428,7 +1428,7 @@ function closeModalOutside(e) {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
 }
 function submitForm() {
-  const fields = [
+  var fields = [
     { el: 'fname', val: document.getElementById('fname').value.trim() },
     { el: 'femail', val: document.getElementById('femail').value.trim() },
     { el: 'fcompany', val: document.getElementById('fcompany').value.trim() },
@@ -1436,22 +1436,29 @@ function submitForm() {
     { el: 'fexpect', val: document.getElementById('fexpect').value.trim() },
     { el: 'fchannel', val: document.getElementById('fchannel').value }
   ];
-  let valid = true;
-  fields.forEach(f => {
-    const el = document.getElementById(f.el);
+  var valid = true;
+  fields.forEach(function(f) {
+    var el = document.getElementById(f.el);
     if (!f.val) {
       valid = false;
       el.style.borderColor = '#ff4757';
-      setTimeout(() => el.style.borderColor = '', 2000);
+      setTimeout(function() { el.style.borderColor = ''; }, 2000);
     }
   });
   if (!valid) return;
 
-  const btn = document.querySelector('.form-submit .btn-primary');
+  var emailVal = document.getElementById('femail').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+    document.getElementById('femail').style.borderColor = '#ff4757';
+    setTimeout(function() { document.getElementById('femail').style.borderColor = ''; }, 2000);
+    return;
+  }
+
+  var btn = document.querySelector('.form-submit .btn-primary');
   btn.disabled = true;
   btn.textContent = 'Sending...';
 
-  const payload = {
+  var payload = {
     name: document.getElementById('fname').value.trim(),
     email: document.getElementById('femail').value.trim(),
     company: document.getElementById('fcompany').value.trim(),
@@ -1462,21 +1469,37 @@ function submitForm() {
     contactEmail: document.getElementById('fcontactemail').value.trim()
   };
 
-  fetch('/api/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(r => r.json())
-  .then(data => console.log('Submit success:', data))
-  .catch(err => console.error('Submit error:', err))
-  .finally(() => {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/submit');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
     btn.disabled = false;
     btn.textContent = 'Submit Request →';
-  });
-
-  document.getElementById('formView').style.display = 'none';
-  document.getElementById('successView').classList.add('active');
+    if (xhr.status === 200) {
+      document.getElementById('formView').style.display = 'none';
+      document.getElementById('successView').classList.add('active');
+    } else {
+      var resp = JSON.parse(xhr.responseText);
+      console.error('Submit failed:', resp.error);
+      btn.style.background = '#ff4757';
+      btn.textContent = 'Something went wrong — try again';
+      setTimeout(function() {
+        btn.style.background = '';
+        btn.textContent = 'Submit Request →';
+      }, 3000);
+    }
+  };
+  xhr.onerror = function() {
+    btn.disabled = false;
+    btn.textContent = 'Submit Request →';
+    btn.style.background = '#ff4757';
+    btn.textContent = 'Connection error — try again';
+    setTimeout(function() {
+      btn.style.background = '';
+      btn.textContent = 'Submit Request →';
+    }, 3000);
+  };
+  xhr.send(JSON.stringify(payload));
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
