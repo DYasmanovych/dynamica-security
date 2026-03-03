@@ -1315,6 +1315,33 @@ function submitForm() {
     }
   });
   if (!valid) return;
+
+  const btn = document.querySelector('.modal-body .btn-primary');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const payload = {
+    name: document.getElementById('fname').value.trim(),
+    email: document.getElementById('femail').value.trim(),
+    company: document.getElementById('fcompany').value.trim(),
+    service: document.getElementById('fservice').value,
+    expectations: document.getElementById('fexpect').value.trim(),
+    contactChannel: document.getElementById('fchannel').value,
+    nickname: document.getElementById('fnick').value.trim(),
+    contactEmail: document.getElementById('fcontactemail').value.trim()
+  };
+
+  fetch('https://formspree.io/f/meelbwqj', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .catch(err => console.error('Formspree error:', err))
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Submit';
+  });
+
   document.getElementById('formView').style.display = 'none';
   document.getElementById('successView').classList.add('active');
 }
