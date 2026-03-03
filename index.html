@@ -817,22 +817,142 @@ footer {
 .form-submit { margin-top: 0.4rem; }
 .form-submit .btn-primary { width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.95rem; }
 
-.form-success { display: none; text-align: center; padding: 3rem 2rem; }
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 3.5rem 2.5rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
 .form-success.active { display: block; }
-.form-success .check-circle {
-  width: 56px; height: 56px;
+.success-bg-pulse {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+  animation: success-pulse-bg 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes success-pulse-bg {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+}
+.success-ring-outer {
+  width: 90px; height: 90px;
   border-radius: 50%;
-  background: var(--accent-dim);
-  border: 2px solid var(--accent);
+  border: 1px solid var(--accent-mid);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.2rem;
-  font-size: 1.4rem;
+  margin: 0 auto 1.8rem;
+  position: relative;
+  animation: success-ring-spin 8s linear infinite;
+}
+@keyframes success-ring-spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+.success-ring-outer::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--accent);
+  animation: success-ring-spin 3s linear infinite;
+}
+.success-check-wrap {
+  width: 62px; height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  box-shadow: 0 0 30px rgba(0, 229, 160, 0.3), 0 0 60px rgba(0, 229, 160, 0.1);
+}
+@keyframes success-pop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.success-check-wrap svg {
+  width: 28px; height: 28px;
+  stroke: var(--bg-primary);
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.success-check-wrap svg path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: success-draw-check 0.4s ease-out 0.6s forwards;
+}
+@keyframes success-draw-check { to { stroke-dashoffset: 0; } }
+.form-success h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+  position: relative;
+  animation: success-text-up 0.5s ease-out 0.4s both;
+}
+.form-success .success-sub {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  line-height: 1.6;
+  position: relative;
+  animation: success-text-up 0.5s ease-out 0.55s both;
+  margin-bottom: 1.8rem;
+}
+@keyframes success-text-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.success-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  animation: success-text-up 0.5s ease-out 0.7s both;
+}
+.success-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.success-detail .sd-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid rgba(0,229,160,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
   color: var(--accent);
 }
-.form-success h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
-.form-success p { font-size: 0.9rem; color: var(--text-secondary); font-weight: 300; }
+.success-close-btn {
+  margin-top: 1.8rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.6rem 1.8rem;
+  border-radius: 4px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  animation: success-text-up 0.5s ease-out 0.85s both;
+}
+.success-close-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ═══ ANIMATIONS ═══ */
 @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
@@ -1254,9 +1374,20 @@ footer {
       </div>
     </div>
     <div class="form-success" id="successView">
-      <div class="check-circle">✓</div>
-      <h3>Request Received!</h3>
-      <p>Our team will review your needs and reach out within 24 hours.</p>
+      <div class="success-bg-pulse"></div>
+      <div class="success-ring-outer">
+        <div class="success-check-wrap">
+          <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+      </div>
+      <h3>You're All Set!</h3>
+      <p class="success-sub">We've received your request and our team is already on it.</p>
+      <div class="success-details">
+        <div class="success-detail"><span class="sd-icon">✓</span> Response within 24 hours</div>
+        <div class="success-detail"><span class="sd-icon">✓</span> Tailored proposal for your needs</div>
+        <div class="success-detail"><span class="sd-icon">✓</span> No commitment required</div>
+      </div>
+      <button class="success-close-btn" onclick="closeModal()">Close Window</button>
     </div>
   </div>
 </div>
@@ -1315,13 +1446,12 @@ function submitForm() {
     }
   });
   if (!valid) return;
-
   const btn = document.querySelector('.form-submit .btn-primary');
   btn.disabled = true;
   btn.textContent = 'Sending...';
-
   const payload = {
     name: document.getElementById('fname').value.trim(),
+    _replyto: document.getElementById('femail').value.trim(),
     email: document.getElementById('femail').value.trim(),
     company: document.getElementById('fcompany').value.trim(),
     service: document.getElementById('fservice').value,
@@ -1330,18 +1460,24 @@ function submitForm() {
     nickname: document.getElementById('fnick').value.trim(),
     contactEmail: document.getElementById('fcontactemail').value.trim()
   };
-
   fetch('https://formspree.io/f/meelbwqj', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
     body: JSON.stringify(payload)
   })
+  .then(response => {
+    if (!response.ok) console.error('Formspree response not OK:', response.status);
+    return response.json();
+  })
+  .then(data => console.log('Formspree success:', data))
   .catch(err => console.error('Formspree error:', err))
   .finally(() => {
     btn.disabled = false;
-    btn.textContent = 'Submit';
+    btn.textContent = 'Submit Request →';
   });
-
   document.getElementById('formView').style.display = 'none';
   document.getElementById('successView').classList.add('active');
 }
