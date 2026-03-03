@@ -1446,13 +1446,26 @@ function submitForm() {
     }
   });
   if (!valid) return;
+
   const btn = document.querySelector('.form-submit .btn-primary');
   btn.disabled = true;
   btn.textContent = 'Sending...';
-  const payload = {
+
+  // Create a hidden form and submit it via iframe to avoid redirect
+  const iframe = document.createElement('iframe');
+  iframe.name = 'formsubmit';
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://formspree.io/f/meelbwqj';
+  form.target = 'formsubmit';
+
+  const fieldData = {
     name: document.getElementById('fname').value.trim(),
-    _replyto: document.getElementById('femail').value.trim(),
     email: document.getElementById('femail').value.trim(),
+    _replyto: document.getElementById('femail').value.trim(),
     company: document.getElementById('fcompany').value.trim(),
     service: document.getElementById('fservice').value,
     expectations: document.getElementById('fexpect').value.trim(),
@@ -1460,24 +1473,27 @@ function submitForm() {
     nickname: document.getElementById('fnick').value.trim(),
     contactEmail: document.getElementById('fcontactemail').value.trim()
   };
-  fetch('https://formspree.io/f/meelbwqj', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(response => {
-    if (!response.ok) console.error('Formspree response not OK:', response.status);
-    return response.json();
-  })
-  .then(data => console.log('Formspree success:', data))
-  .catch(err => console.error('Formspree error:', err))
-  .finally(() => {
-    btn.disabled = false;
-    btn.textContent = 'Submit Request →';
+
+  Object.entries(fieldData).forEach(([key, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = value;
+    form.appendChild(input);
   });
+
+  document.body.appendChild(form);
+  form.submit();
+
+  // Clean up after submission
+  setTimeout(() => {
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
+  }, 2000);
+
+  btn.disabled = false;
+  btn.textContent = 'Submit Request →';
+
   document.getElementById('formView').style.display = 'none';
   document.getElementById('successView').classList.add('active');
 }
