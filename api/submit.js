@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const resend = new Resend('re_XAkgK7ks_BXi7t57zhrPscCZkHFruoRuy');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function sanitize(str) {
   if (typeof str !== 'string') return '';
@@ -62,8 +62,8 @@ export default async function handler(req, res) {
     }
 
     const { error } = await resend.emails.send({
-      from: 'Dynamica Security <onboarding@resend.dev>',
-      to: 'dmytro.yasmanovych@gmail.com',
+      from: 'Dynamica Security <hello@dynamica.consulting>',
+      to: 'hello@dynamica.consulting',
       subject: `New Lead: ${s.name} — ${s.service}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a1118;color:#e8edf2;padding:32px;border-radius:12px;">
